@@ -122,6 +122,9 @@ public final class ThaiAlphabetBlockFabric implements ModInitializer {
             }
 
             DyeColor newColor = stack.get(net.minecraft.core.component.DataComponents.DYE);
+            if (newColor == null) {
+                return InteractionResult.PASS;
+            }
 
             // Same color already applied — consume the interaction but do nothing
             if (state.getValue(ThaiAlphabetColorProperties.GLYPH_COLOR) == newColor) {

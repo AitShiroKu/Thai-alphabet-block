@@ -46,6 +46,9 @@ public class ThaiLetterBlock extends Block {
             // NOTE: Shift + Right-click (glyph color) is handled by the UseBlockCallback
             // event in ThaiAlphabetBlockFabric, because vanilla skips useItemOn() when sneaking.
             DyeColor dyeColor = stack.get(net.minecraft.core.component.DataComponents.DYE);
+            if (dyeColor == null) {
+                return InteractionResult.PASS;
+            }
             ThaiAlphabetColorProperties.ThaiBlockColor newColor = ThaiAlphabetColorProperties.ThaiBlockColor.fromDyeColor(dyeColor);
             if (state.getValue(COLOR) == newColor) {
                 return InteractionResult.CONSUME;

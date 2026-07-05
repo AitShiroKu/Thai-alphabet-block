@@ -51,6 +51,9 @@ public final class ThaiAlphabetGlyphDyeHandler {
         if (!state.hasProperty(ThaiAlphabetColorProperties.GLYPH_COLOR)) return false;
 
         DyeColor newColor = stack.get(net.minecraft.core.component.DataComponents.DYE);
+        if (newColor == null) {
+            return false;
+        }
 
         // Same color already applied — consume the interaction but do nothing
         if (state.getValue(ThaiAlphabetColorProperties.GLYPH_COLOR) == newColor) {
