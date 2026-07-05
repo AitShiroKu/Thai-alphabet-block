@@ -11,7 +11,7 @@ import com.aitshiroku.thai_alphabet_block.ThaiAlphabetDefinitions;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -73,7 +73,7 @@ public final class ThaiAlphabetBlockFabric implements ModInitializer {
         );
 
         // Register custom creative tab
-        CreativeModeTab thaiAlphabetTab = FabricItemGroup.builder()
+        CreativeModeTab thaiAlphabetTab = FabricCreativeModeTab.builder()
             .title(Component.translatable("itemGroup.thai_alphabet_block"))
             .icon(() -> {
                 Item firstItem = REGISTERED_ITEMS.get("consonant_ko_kai");
@@ -121,7 +121,7 @@ public final class ThaiAlphabetBlockFabric implements ModInitializer {
                 return InteractionResult.PASS;
             }
 
-            DyeColor newColor = dyeItem.getDyeColor();
+            DyeColor newColor = stack.get(net.minecraft.core.component.DataComponents.DYE);
 
             // Same color already applied — consume the interaction but do nothing
             if (state.getValue(ThaiAlphabetColorProperties.GLYPH_COLOR) == newColor) {

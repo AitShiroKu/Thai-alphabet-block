@@ -1,14 +1,15 @@
 package com.aitshiroku.ThaiAlphabetBlock;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockColorRegistry;
+import net.minecraft.client.color.block.BlockTintSource;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.color.item.ItemTintSources;
 import net.minecraft.client.color.item.ItemTintSource;
 import com.mojang.serialization.MapCodec;
@@ -71,27 +72,43 @@ public final class ThaiAlphabetFabricClient implements ClientModInitializer {
             if (!(block instanceof ThaiLetterBlock)) {
                 continue;
             }
-            BlockRenderLayerMap.putBlock(block, ChunkSectionLayer.CUTOUT);
-            ColorProviderRegistry.BLOCK.register(
-                    (state, world, pos, tintIndex) -> {
-                        if (tintIndex != 0 && tintIndex != 1) {
-                            return -1;
-                        }
-                        if (tintIndex == 0) {
-                            // Background color
-                            ThaiAlphabetColorProperties.ThaiBlockColor color = state.hasProperty(ThaiLetterBlock.COLOR)
-                                    ? state.getValue(ThaiLetterBlock.COLOR)
-                                    : ThaiAlphabetColorProperties.ThaiBlockColor.NONE;
-                            return ThaiAlphabetColorUtil.backgroundArgbFromColor(color);
-                        } else {
-                            // Glyph color
-                            DyeColor glyphDye = state.hasProperty(ThaiLetterBlock.GLYPH_COLOR)
-                                    ? state.getValue(ThaiLetterBlock.GLYPH_COLOR)
-                                    : DyeColor.BLACK;
-                            return ThaiAlphabetColorUtil.glyphArgbFromDye(glyphDye);
-                        }
-                    },
-                    block);
+            java.util.List<BlockTintSource> tintSources = java.util.List.of(
+                new BlockTintSource() {
+                    @Override
+                    public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+                        ThaiAlphabetColorProperties.ThaiBlockColor color = state.hasProperty(ThaiLetterBlock.COLOR)
+                                ? state.getValue(ThaiLetterBlock.COLOR)
+                                : ThaiAlphabetColorProperties.ThaiBlockColor.NONE;
+                        return ThaiAlphabetColorUtil.backgroundArgbFromColor(color);
+                    }
+
+                    @Override
+                    public int color(BlockState state) {
+                        ThaiAlphabetColorProperties.ThaiBlockColor color = state.hasProperty(ThaiLetterBlock.COLOR)
+                                ? state.getValue(ThaiLetterBlock.COLOR)
+                                : ThaiAlphabetColorProperties.ThaiBlockColor.NONE;
+                        return ThaiAlphabetColorUtil.backgroundArgbFromColor(color);
+                    }
+                },
+                new BlockTintSource() {
+                    @Override
+                    public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+                        DyeColor glyphDye = state.hasProperty(ThaiLetterBlock.GLYPH_COLOR)
+                                ? state.getValue(ThaiLetterBlock.GLYPH_COLOR)
+                                : DyeColor.BLACK;
+                        return ThaiAlphabetColorUtil.glyphArgbFromDye(glyphDye);
+                    }
+
+                    @Override
+                    public int color(BlockState state) {
+                        DyeColor glyphDye = state.hasProperty(ThaiLetterBlock.GLYPH_COLOR)
+                                ? state.getValue(ThaiLetterBlock.GLYPH_COLOR)
+                                : DyeColor.BLACK;
+                        return ThaiAlphabetColorUtil.glyphArgbFromDye(glyphDye);
+                    }
+                }
+            );
+            BlockColorRegistry.register(tintSources, block);
         }
     }
 }
