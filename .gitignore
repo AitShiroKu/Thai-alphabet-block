@@ -40,4 +40,6 @@ run-data
 # other mods version
 .version/
 .antigravitycli/
+scratch/
+.gemini/
 

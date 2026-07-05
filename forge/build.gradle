@@ -1,7 +1,8 @@
 plugins {
+    id 'java'
     id 'idea'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '6.0.53'
+    id 'net.minecraftforge.gradle' version '7.0.31'
 }
 
 version = mod_version
@@ -11,21 +12,23 @@ base {
     archivesName = mod_id + "-forge"
 }
 
-// Mojang ships Java 21 to end users in 1.21+, so your mod should target Java 21.
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+// Mojang ships Java 25 to end users in 26.2+, so your mod should target Java 25.
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
+    dependency "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     mappings channel: mapping_channel, version: mapping_version
 
-    copyIdeResources = true
+    // copyIdeResources = true
 
     runs {
         configureEach {
-            workingDirectory project.file('run')
+            workingDir = project.file('run')
 
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
+            systemProperties['forge.logging.markers'] = 'REGISTRIES'
+            systemProperties['forge.logging.console.level'] = 'debug'
+            systemProperties['org.lwjgl.glfw.platform'] = 'X11'
 
             mods {
                 "${mod_id}" {
@@ -35,20 +38,20 @@ minecraft {
         }
 
         client {
-            property 'forge.enabledGameTestNamespaces', mod_id
+            systemProperties['forge.enabledGameTestNamespaces'] = mod_id
         }
 
         server {
-            property 'forge.enabledGameTestNamespaces', mod_id
+            systemProperties['forge.enabledGameTestNamespaces'] = mod_id
             args '--nogui'
         }
 
         gameTestServer {
-            property 'forge.enabledGameTestNamespaces', mod_id
+            systemProperties['forge.enabledGameTestNamespaces'] = mod_id
         }
 
         data {
-            workingDirectory project.file('run-data')
+            workingDir = project.file('run-data')
 
             args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/'), '--existing', project(':common').file('src/main/resources/')
         }
@@ -62,10 +65,19 @@ sourceSets.main.resources {
 sourceSets.main.output.resourcesDir = file("$buildDir/classes/java/main")
 
 repositories {
+    maven {
+        name = 'MinecraftForge'
+        url = 'https://maven.minecraftforge.net/'
+    }
+    maven {
+        name = 'Mojang'
+        url = 'https://libraries.minecraft.net/'
+    }
+    minecraft.mavenizer(it)
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    implementation minecraft.dependency
     implementation project(':common')
 }
 
