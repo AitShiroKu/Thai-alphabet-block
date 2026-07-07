@@ -5,15 +5,6 @@ import java.util.List;
 
 public final class ThaiAlphabetDefinitions {
 
-    /**
-     * FULL = normal cube; SLAB = half-height slab for marks drawn on the face
-     * above/below a consonant.
-     */
-    public enum LetterBlockShape {
-        FULL,
-        SLAB,
-    }
-
     public enum CharacterType {
         CONSONANT,
         VOWEL,
@@ -25,18 +16,7 @@ public final class ThaiAlphabetDefinitions {
         String thaiSymbol,
         String englishName,
         CharacterType type
-    ) {
-        public LetterBlockShape shape() {
-            return shapeFor(id, type);
-        }
-    }
-
-    /**
-     * All blocks are now full blocks (consonants, vowels, and tone marks).
-     */
-    public static LetterBlockShape shapeFor(String id, CharacterType type) {
-        return LetterBlockShape.FULL;
-    }
+    ) {}
 
     public static final List<CharacterDef> CONSONANTS = List.of(
         new CharacterDef(
