@@ -29,6 +29,8 @@ minecraft {
             systemProperties['forge.logging.markers'] = 'REGISTRIES'
             systemProperties['forge.logging.console.level'] = 'debug'
             systemProperties['org.lwjgl.glfw.platform'] = 'X11'
+            environment['XDG_SESSION_TYPE'] = 'x11'
+            jvmArgs '-Dorg.lwjgl.glfw.platform=x11'
 
             mods {
                 "${mod_id}" {
